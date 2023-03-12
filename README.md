@@ -15,7 +15,13 @@ Bart McCoy;  March 12, 2023
     - ### Started with the "Brute Force" conversion (above)
     - ### Class is named "SpinBoxClass";   Each class instance == a new SpinBox 
     - ### Can now generate as many spinboxes as we want
-
+  - ## [Spinbox_Program.py](https://github.com/BartOMan/guizero_starter/blob/main/src/Spinbox_Program.py)  
+  - ## [Slider_Program.py](https://github.com/BartOMan/guizero_starter/blob/main/src/Slider_Program.py)  
+  - ## [Spinbox_Class_Rebuild.py](https://github.com/BartOMan/guizero_starter/blob/main/src/Spinbox_Class_Rebuild.py)  
+    - ### Bart's fresh rebuild of the spinbox:   class 'SpinBoxRanged'
+    - ### When transitioning from functions ==> classes, you often shed many variables no longer needed
+    - ### Classes require fewer intermediate vars because since you don't shuttle info around
+   
  
 
 

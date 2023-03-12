@@ -3,6 +3,75 @@ import math
 from guizero import Text, App, Box
 from tkinter import Spinbox
 
+
+
+class bomSpinbox:
+
+    name                = ''
+    x                   = 0
+    y                   = 0
+    
+    # Spinbox setup values
+    textList            = []            # List of (string) values to populate guiSpinBoxText
+    numericList         = []            # List of (numeric) values to populate guiSpinBoxNumeric
+    start               = 0             # integer start value
+    stop                = 0             # integer stop value
+    maxSize             = 0             # Don't allow the numeric spinbox to have more than this number of values
+        
+    
+    # GUI components
+    guiApp              = []            # Main app
+    guiContainer        = []            # TK Box object
+    guiSpinBoxText      = []            # Spinbox, holding text/descriptive ranges
+    guiSpinBoxNumeric   = []            # Spinbox, holding numeric values
+    
+    guiSpinBoxTextTK    = []            # TK object after placing inside guiContainer
+    guiSpinBoxNumericTK = []            # TK object after placing inside guiContainer
+
+    spinboxValues       = {}            # Dictionary
+    
+    def __init__(self):
+    
+        return
+        
+    def initialize(self, guiApp, name, x,y, start, stop, maxSize):
+
+        self.name  = ''
+        self.x     = x
+        self.y     = y
+        self.start = start
+        self.stop  = stop
+        self.maxSize  = maxSize
+        self.spinboxValues = {  'range'     :   '',         # Spinbox #1 text (descriptive range) value stored here
+                                'value'     :   0,          # Spinbox #2 numeric value
+                                }
+                                
+        self.guiApp = guiApp
+        self.guiContainer = Box(guiApp, height=24, width=300, border=1, layout='grid', grid=[2,2])
+        
+        self.textList          = [ 'one', 'two', 'three', 'four', 'five', 'six', 'seven' ]
+        self.numericList       = list(range(0,7))
+        
+        self.guiSpinBoxText    = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxText(),    values=self.textList,    width=13, justify='left', wrap=1, state='readonly')
+        self.guiSpinBoxNumeric = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxNumeric(), values=self.numericList, width=13, justify='left', wrap=1, state='readonly')
+        # self.guiSpinBoxNumeric = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxNumeric(), from_=0, to=20, width=13, justify='left', wrap=1, state='readonly')
+
+        self.guiSpinBoxTextTK    = self.guiContainer.add_tk_widget(self.guiSpinBoxText,    grid=[x, y  ])  
+        self.guiSpinBoxNumericTK = self.guiContainer.add_tk_widget(self.guiSpinBoxNumeric, grid=[x, y+1])  
+        return
+        
+    def getValueSpinBoxText(self):
+        self.textValue = self.guiSpinBoxText.get()        # get selected spinbox text 'range' value.
+        return 
+
+    def getValueSpinBoxNumeric(self):
+        self.numericValue = self.guiSpinBoxNumeric.get()     # get selected spinbox numeric value
+        return
+
+
+
+
+
 # GRAPHICAL OBJECTS:
 #   SpinBox objs:       sb_range, sb_step
 #   Box obj:            b_container, pad_l, pad_lc, pad_rc, pad_r
@@ -12,7 +81,7 @@ class SpinBoxClass:
     __doc__ =   """
                 class SpinBoxClass:
                 This class is a wrapper for creating/managing a Spinbox TKinter GUI object,
-                for use in Python 'GUIZERO' package.
+                for use in Python 'GUIZERO' package
                 """                
 
     # Data specific to this Spinbox (defines location, name, & value
@@ -21,7 +90,7 @@ class SpinBoxClass:
     name        = ''
     start_r     = 0
     end_r       = 0
-    stepSize    = 0
+    step_r      = 0
 
     # Output dictionary:  stores Parameter name, and value chosen by user
     output      = {}
@@ -54,7 +123,12 @@ class SpinBoxClass:
     sb_range_b   = []       # TK widget
       
       
-    def __init__(self, app, x, y, name,  start_r, end_r, stepSize):  
+    # def __init__(self, app, x, y, name,  start_r, end_r, step_r):  
+    def __init__(self):  
+    
+        return
+
+    def initialize(self, app, x, y, name,  start_r, end_r, step_r):  
     
         self.app        = app                           
         
@@ -64,13 +138,12 @@ class SpinBoxClass:
         self.name       = name
         self.start_r    = start_r
         self.end_r      = end_r
-        self.stepSize   = stepSize
-        
-        
-        self.value_list = self.clear_list()             # 
-        self.parm_list  = self.clear_list()             # 
-        self.text_list  = self.clear_list()             # 
-        self.btext_list = self.clear_list()             # 
+        self.step_r     = step_r
+                
+        # self.value_list = self.clear_list()             # 
+        # self.parm_list  = self.clear_list()             # 
+        # self.text_list  = self.clear_list()             # 
+        # self.btext_list = self.clear_list()             # 
         # print('>> value_list: ', self.value_list)       # 
 
         self.getinput_sb1()
@@ -90,8 +163,7 @@ class SpinBoxClass:
         objstr += "\n"
         """
         return objstr
-        
-        
+           
     # array to pass parameters between functions.
     def clear_list(self):
         newlist = [[None, None, None, None], [None, None, None, None]]
@@ -109,7 +181,6 @@ class SpinBoxClass:
                          'value'    :   sb_value,                         
                          }
         return
-
 
     # sb_range command function.
     def sb_range_cmdx(self):
@@ -141,27 +212,37 @@ class SpinBoxClass:
     #   Get user spinbox input #1.
     #   uses TKINTER spinbox widget (2 spinboxes).
     def getinput_sb1(self):
-        #
-        # x, y       - grid coordinates.        - parameter
-        # name - Function Variable name.  - parameter
-        # start_r    - Range start number       - parameter
-        # end_r      - Range end number         - parameter
-        step_r = self.stepSize  # Range step number        - default
+        """
+        getinput_sb1()
+        
+        DESCRIPTION:
+        The primary function for building a pair of coordinated Spinboxes.
+        """
+    
+        """  Variables
+        x, y       - grid coordinates.       
+        name       - Function Variable name. 
+        start_r    - Range start number      
+        end_r      - Range end number        
+        """
+        
+        step_r = self.step_r  # Range step number        - default
 
-        #
+        
         # Box - widget container box.
         box_height = 24     # Container height value
         box_width = 300    # Container height value  268
 
-        print('F getinput_pb1: ', self.x, self.y, self.name)
+        print("F getinput_pb1:  x={}, y={},  '{}'", self.x, self.y, self.name)
     
-        #
+        
         # default initial 'Range and Step' spinbox value.
         sb_initial  = '*1 Range Step'  # spinbox 'range' initial value
         sb_noneflag = 'None'  # spinbox 'step' initial value
 
         print('1: ', self.start_r, self.end_r)
-        #
+        
+        
         # TKINTER spinbox requires: start < end, step_r needs to be positive
         step_r = abs(step_r)  # insure r_step is positive
         if self.start_r > self.end_r:  # make sure Start is less than End
@@ -170,7 +251,7 @@ class SpinBoxClass:
         range_r = self.end_r - self.start_r  # get range between Start and End.
         print('2: ', self.start_r, self.end_r, range_r)
 
-        #
+        
         # create the range step list (format):
         #   ['*1 Range Step', 'None', 'None'] > [sb_initial,sb_noneflag,sb_noneflag]
         #   ['R2 1800/2049', 1800, 2049]      > [f'R2 {start_r}/{end_r}',start_r, end_r]
@@ -183,7 +264,7 @@ class SpinBoxClass:
         print('3: ', idxa_r, idx_r)
         range_steps = [[sb_initial, sb_noneflag, sb_noneflag],
                        [f'R2 {self.start_r}/{self.end_r}', self.start_r, self.end_r]]
-        #
+        
         # Create a step 'parameters' list and append it to the range_steps list.
         stepindex = 3  # initial step index: *1, R2, S'stepindex'
         low_r = high_r = self.start_r  # Initial starting variables to the 'start' value.
@@ -203,7 +284,6 @@ class SpinBoxClass:
 
         print('range_steps,range_list 5: ', range_steps, '\n', range_list)
 
-        ###
         # define the box to hold the text and 2 spinbox widgets.
         self.b_container = Box(app, height=box_height, width=box_width, border=1, layout='grid', grid=[self.x, self.y])
 
@@ -228,6 +308,7 @@ class SpinBoxClass:
         self.pad_lc = Box(self.b_container, height=22, width=6, grid = [2,0])
         self.pad_lc.bg = "green2"
 
+        
         #
         range_list = ['one', 'two']
         
@@ -242,7 +323,7 @@ class SpinBoxClass:
                            
         sb_range_value = self.sb_range.get()
         #print('sb_range: ',sb_range_value) # Get initial spinbox value.
-        self.sb_range_b = self.b_container.add_tk_widget(self.sb_range, grid=[3,0])
+        self.sb_range_b = self.b_container.add_tk_widget(self.sb_range, grid=[3,0])  
         self.sb_range_b.bg = "wheat2"
 
         #
@@ -279,9 +360,20 @@ if __name__ == '__main__':
     
     instructions = Text(app, text="Get numeric value", grid=[0, 0]) 
     
-    sbYear = SpinBoxClass(app, 0, 1, 'Year',   1800, 2049, 50)   # args:  (app, x, y, name, start_r, end_r, stepSize)
-    sbVol  = SpinBoxClass(app, 0, 2, 'Volume', 0,    400,  50)   # args:  (app, x, y, name, start_r, end_r, stepSize)
-    sbDay  = SpinBoxClass(app, 0, 3, 'Day',    1,    31,   31)   # args:  (app, x, y, name, start_r, end_r, stepSize)
+    x           = 0
+    y           = 1
+    name        = 'Year'
+    start_r     = 1800
+    end_r       = 2049
+    step_r      = 50
+    
+    sbYear = SpinBoxClass()
+    self   = sbYear
+    sbYear.initialize(app, x, y, name,   start_r, end_r, step_r)   # args:  (app, x, y, name, start_r, end_r, step_r)
+    
+    sbYear = SpinBoxClass(app, 0, 1, 'Year',   1800, 2049, 50)   # args:  (app, x, y, name, start_r, end_r, step_r)
+    sbVol  = SpinBoxClass(app, 0, 2, 'Volume', 0,    400,  50)   # args:  (app, x, y, name, start_r, end_r, step_r)
+    sbDay  = SpinBoxClass(app, 0, 3, 'Day',    1,    31,   31)   # args:  (app, x, y, name, start_r, end_r, step_r)
     app.display()
     
     print("\nFinal Values from the user:")

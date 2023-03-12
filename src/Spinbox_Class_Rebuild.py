@@ -1,4 +1,5 @@
 
+import sys
 import math
 from guizero import Text, App, Box
 from tkinter import Spinbox
@@ -25,19 +26,18 @@ class SpinBoxRanged:
     guiSpinBoxNumeric   = []            # Spinbox, holding numeric values    
     guiSpinBoxTextTK    = []            # TK object after placing inside guiContainer
     guiSpinBoxNumericTK = []            # TK object after placing inside guiContainer
+    guiPaddings         = []            # GUI objects used for padding
 
+    # FINAL USER OUTPUTS STORED HERE:
     output              = {}            # Dictionary, stores the final values selected by the user
-    
-    def __init__(self):
-    
-        return
-        
-    def initialize(self, app, x,y, name, start, stop, maxSize):
+    value               = 0             # Stores user-selected value... same as .output['value']
+            
+    def __init__(self, app, x,y, name, start, stop, maxSize):
         """
-        initialize(app, x,y, name, start, stop, maxSize)
+        __init__(app, x,y, name, start, stop, maxSize)
         
         DESCRIPTION:
-        Builds the GUI components and fills out the ranges.
+        Constructor, builds the GUI components and fills out the ranges.
         This is the only method that needs to be run.
         
         Inputs:
@@ -53,7 +53,9 @@ class SpinBoxRanged:
         self.x     = x
         self.y     = y
         
-        assert stop > start, "Error in SpinBoxRanged.initialize():\n\tArgument 'stop' must be > 'start'"
+        # Error check... returns an error if this isn't right
+        assert stop > start, "Error in SpinBoxRanged.__init__():\n\tConstructor argument 'stop' must be > 'start'"
+        
         self.start = start
         self.stop  = stop
         self.maxSize  = maxSize
@@ -65,9 +67,10 @@ class SpinBoxRanged:
                         
         self.guiApp = app
         self.guiContainer = Box(app, height=24, width=300, border=1, layout='grid', grid=[x,y])
-        
-        self.textList          = [ 'one', 'two', 'three', 'four', 'five', 'six', 'seven' ]
-        self.numericList       = list(range(0,7))
+
+        # Used for debugging
+        # self.textList          = [ 'one', 'two', 'three', 'four', 'five', 'six', 'seven' ]
+        # self.numericList       = list(range(0,7))
         
         dictRangeValues = {}        # Dictionary to hold all text "ranges" and corresponding numeric values        
         numRanges = math.ceil( (stop-start)/maxSize )   
@@ -78,7 +81,9 @@ class SpinBoxRanged:
         k=0
         for k in range(numRanges):
             valStart = start+k*maxSize                                  # numeric start of 1 range           
-            valStop  = start+(k+1)*maxSize                              # numeric end of 1 range
+            valStop  = start+(k+1)*maxSize-1                            # numeric end of 1 range
+            if ( valStop > stop ):
+                valStop = stop
             values   = list(range(valStart, valStop+1))                 # All numeric values for spinbox (dictionary value)
             text     = "S{}:  {}/{}".format(k+1, valStart,valStop)      # text description of range (dictionary key)
             dictRangeValues[text] = values                              # Store text description and value 
@@ -91,12 +96,26 @@ class SpinBoxRanged:
         self.output['range']   = textRange                              # Initialize output (text) range in dictionary
         self.output['value']   = self.numericList[0]                    # Initialize output value in dictionary
         
+        
+        # NOW BUILD THE GUI STUFF        
         self.guiSpinBoxText    = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxText(),    values=self.textList,    width=13, justify='left', wrap=1, state='readonly')       
         self.guiSpinBoxNumeric = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxNumeric(), values=self.numericList, width=13, justify='left', wrap=1, state='readonly')
         # self.guiSpinBoxNumeric = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxNumeric(), from_=0, to=20, width=13, justify='left', wrap=1, state='readonly')
-
-        self.guiSpinBoxTextTK    = self.guiContainer.add_tk_widget(self.guiSpinBoxText,    grid=[0,0])  
-        self.guiSpinBoxNumericTK = self.guiContainer.add_tk_widget(self.guiSpinBoxNumeric, grid=[1,0])  
+        
+        # Place all GUI objs (spacers, text, & Spinboxes) in .guiContainer, on a grid, left to right
+        guiPadL                 = Box(self.guiContainer,  height=22, width=5,                   grid=[0,0] )
+        guiTxtName              = Text(self.guiContainer, size = 8,  width=14, text=self.name,  grid=[1,0] )
+        guiPadLC                = Box(self.guiContainer,  height=22, width=6,                   grid=[2,0] )        
+        self.guiSpinBoxTextTK   = self.guiContainer.add_tk_widget(self.guiSpinBoxText,          grid=[3,0] )          
+        guiPadRC                = Box(self.guiContainer,  height=22, width=5,                   grid=[4,0] )        
+        self.guiSpinBoxNumericTK= self.guiContainer.add_tk_widget(self.guiSpinBoxNumeric,       grid=[5,0] )  
+        
+        # Store these, so they don't go out of scope
+        self.guiPaddings.append(guiPadL)
+        self.guiPaddings.append(guiTxtName)
+        self.guiPaddings.append(guiPadLC)
+        self.guiPaddings.append(guiPadRC)
+        
         return
         
     def getValueSpinBoxText(self):
@@ -104,14 +123,18 @@ class SpinBoxRanged:
         self.output['range'] = txt                              # Store the text range value in .output dict
         numericList = self.dictRangeValues[txt]                 # Get the new list of numeric values in that range
         self.guiSpinBoxNumeric.configure(values=numericList)    # Update the numeric spinner with new values
-        self.output['value'] = self.guiSpinBoxNumeric.get()     # Store selected spinbox numeric value
+        
+        # Also have to update the value, since user switched ranges
+        val = self.guiSpinBoxNumeric.get()                      # Store selected spinbox numeric value
+        self.output['value'] = val                              # Store selected spinbox numeric value in dict
+        self.value = val                                        # Store selected spinbox numeric value in .value
         return 
 
     def getValueSpinBoxNumeric(self):
         val = self.guiSpinBoxNumeric.get()                      # get selected spinbox numeric value
-        self.output['value'] = val                              # store selected spinbox numeric value
+        self.output['value'] = val                              # store selected spinbox numeric value in dict
+        self.value = val                                        # Store selected spinbox numeric value in .value
         return
-
 
 
 if __name__ == '__main__':
@@ -120,27 +143,25 @@ if __name__ == '__main__':
     guiInstructions   = Text(app, text="Get numeric value", grid=[0,0])
     # app.display()
       
-    x           = 3
-    y           = 2
-    name        = 'Year'
-    start       = 1800
-    stop        = 2049
-    maxSize     = 50            # No more than 50 years in the numeric spinbox
+    x = 1
+    y = 2
+    name = 'Day'
+    start = 1
+    stop  = 31
+    maxSize = 7
     
-    sbYear = SpinBoxRanged()
-    self   = sbYear
-    sbYear.initialize(app, x, y, name,  start, stop, maxSize)   # args:  (app, x, y, name, start, stop, maxSize)
-    
-    # sbYear = SpinBoxClass(app, 0, 1, 'Year',   1800, 2049, 50)   # args:  (app, x, y, name, start_r, end_r, step_r)
-    # sbVol  = SpinBoxClass(app, 0, 2, 'Volume', 0,    400,  50)   # args:  (app, x, y, name, start_r, end_r, step_r)
-    # sbDay  = SpinBoxClass(app, 0, 3, 'Day',    1,    31,   31)   # args:  (app, x, y, name, start_r, end_r, step_r)
+    sbYear = SpinBoxRanged(app, 0, 0, 'Year',  1800, 2049,  50)   # args:  (app, x, y, name, start, stop, maxSize)    
+    sbVol  = SpinBoxRanged(app, 0, 1, 'Volume', 0,    400,  50)   # args:  (app, x, y, name, start, stop, maxSize)
+    sbDay  = SpinBoxRanged(app, 0, 2, 'Day',    1,    31,   7)   # args:  (app, x, y, name, start, stop, maxSize)
     
     app.display()
     
-    print("\nFinal Values from the user:")
-    # print(sbYear.output)
-    # print(sbVol.output)
-    # print(sbDay.output)
+    print("\nFinal .output Dictionaries from each SpinBoxRanged object:")
+    print(sbYear.output)
+    print(sbVol.output)
+    print(sbDay.output)
+    
+    # You can also ignore the dictionary since we also stored selected value in .value property
+    print("\n\nUser selected year={}, volume={}, day={}\n".format(sbYear.value, sbVol.value, sbDay.value))
 
-    # print(str(sbc))
-
+    sys.exit()

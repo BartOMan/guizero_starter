@@ -3,7 +3,6 @@ import math
 from guizero import Text, App, Box
 from tkinter import Spinbox
 
-
 class SpinBoxRanged:
 
     name                = ''
@@ -16,7 +15,8 @@ class SpinBoxRanged:
     start               = 0             # integer start value
     stop                = 0             # integer stop value
     maxSize             = 0             # Don't allow the numeric spinbox to have more than this number of values
-        
+    dictRangeValues     = {}            # Dictionary that's keyed by the text description of range (e.g. 'S1: 1800/1850')
+                                        #   and valued by the numeric range (e.g. [1800, 1801, 1802, ... 1850] )
     
     # GUI components
     guiApp              = []            # Main app
@@ -86,6 +86,7 @@ class SpinBoxRanged:
             
         textRange              = self.textList[0]                       # Initially, pick the first text range
         self.numericList       = dictRangeValues[textRange]             # Extract corresponding numeric range from dictionary        
+        self.dictRangeValues   = dictRangeValues;                       # Store the dictionary in the class
         
         self.output['range']   = textRange                              # Initialize output (text) range in dictionary
         self.output['value']   = self.numericList[0]                    # Initialize output value in dictionary
@@ -99,11 +100,16 @@ class SpinBoxRanged:
         return
         
     def getValueSpinBoxText(self):
-        self.output['range'] = self.guiSpinBoxText.get()        # get selected spinbox text 'range' value.
+        txt = self.guiSpinBoxText.get()                         # get selected spinbox text 'range' value.
+        self.output['range'] = txt                              # Store the text range value in .output dict
+        numericList = self.dictRangeValues[txt]                 # Get the new list of numeric values in that range
+        self.guiSpinBoxNumeric.configure(values=numericList)    # Update the numeric spinner with new values
+        self.output['value'] = self.guiSpinBoxNumeric.get()     # Store selected spinbox numeric value
         return 
 
     def getValueSpinBoxNumeric(self):
-        self.output['value'] = self.guiSpinBoxNumeric.get()     # get selected spinbox numeric value
+        val = self.guiSpinBoxNumeric.get()                      # get selected spinbox numeric value
+        self.output['value'] = val                              # store selected spinbox numeric value
         return
 
 

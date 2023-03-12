@@ -7,5 +7,5 @@ Bart McCoy;  March 12, 2023
 # Examples
 - ## This is how I link to a file;  [FFT_Calc14.py](https://github.com/BartOMan/FFT_Calculations/blob/main/FFT_Calc14.py)
 - ## This is how I insert an image:   
-![camping image]
-camping image]
+![camping image](https://github.com/BartOMan/guizero_starter/blob/main/images/camping.PNG)
+

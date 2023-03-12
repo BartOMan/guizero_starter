@@ -1,11 +1,8 @@
-# Git Repository Template
+# Python GUIZERO Starter Work (a.k.a.  Helping Mr. Nelson)
 Bart McCoy;  March 12, 2023
 
-# DescriptionThis repository is my ultra-basic repository template.
-- ## It needs lots of refinement, but at least it has a few useful things in it
+# Exploring different ways of doing GUIs with Python GUIZERO
 
-# Examples
-- ## This is how I link to a file;  [FFT_Calc14.py](https://github.com/BartOMan/FFT_Calculations/blob/main/FFT_Calc14.py)
-- ## This is how I insert an image:   
-![camping image](https://github.com/BartOMan/guizero_starter/blob/main/images/camping.PNG)
+# FILE DESCRIPTION:
+- ## [](https://github.com/BartOMan/FFT_Calculations/blob/main/FFT_Calc14.py)
 

@@ -8,9 +8,9 @@ from tkinter import Spinbox
 #   Box obj:            b_container, pad_l, pad_lc, pad_rc, pad_r
 #   Text obj:           text, instructions
 
-class SpinBoxClass:    
+class SpinBoxCompleteApp:    
     __doc__ =   """
-                class SpinBoxClass:
+                class SpinBoxCompleteApp:
                 This class is a wrapper for creating/managing a Spinbox TKinter GUI object,
                 for use in Python 'GUIZERO' package.
                 """                
@@ -249,7 +249,7 @@ class SpinBoxClass:
 if __name__ == '__main__':
 
     app = App(layout="grid")    # note 'app' is global    
-    sbc = SpinBoxClass(app)
+    sbc = SpinBoxCompleteApp(app)
     app.display()
 
     # print(str(sbc))

@@ -14,7 +14,16 @@ class SpinBoxClass:
                 This class is a wrapper for creating/managing a Spinbox TKinter GUI object,
                 for use in Python 'GUIZERO' package.
                 """                
-    app         = []        # GUIZERO App object
+
+    # Data specific to this Spinbox (defines location, name, & value
+    x           = 0
+    y           = 0
+    name        = ''
+    minVal      = 0
+    maxVal      = 0
+    stepSize    = 0
+
+
     value_list  = []        
     parm_list   = []        
     text_list   = []        
@@ -25,6 +34,8 @@ class SpinBoxClass:
     #========================================================    
     # GUI Objects
     #========================================================        
+    app         = []        # GUIZERO App object
+
     instructions = []       # Text object
     text         = []       # Text object
 
@@ -41,20 +52,26 @@ class SpinBoxClass:
     sb_range_b   = []       # TK widget
       
       
-    def __init__(self, app):  
+    def __init__(self, app, x, y, name,  minVal, maxVal, stepSize):  
     
         self.app        = app                           
+        
+        # Data specific to this one SpinBox
+        self.x          = x
+        self.y          = y
+        self.name       = name
+        self.minVal     = minVal
+        self.maxVal     = maxVal
+        self.stepSize   = stepSize
+        
+        
         self.value_list = self.clear_list()             # 
         self.parm_list  = self.clear_list()             # 
         self.text_list  = self.clear_list()             # 
         self.btext_list = self.clear_list()             # 
-        print('>> value_list: ', self.value_list)       # 
+        # print('>> value_list: ', self.value_list)       # 
 
-        self.instructions = Text(app, text="Get numeric value", grid=[0, 0]) 
-
-        self.getinput_sb1(0, 1, 'Year', 1800, 2049)
-        self.getinput_sb1(0, 2, 'Volume', 0, 400)
-        self.getinput_sb1(0, 3, 'Day', 1, 31)    
+        self.getinput_sb1(x, y, name, minVal, maxVal)
         return
         
     def __str__(self):
@@ -119,7 +136,7 @@ class SpinBoxClass:
         # variable_f - Function Variable name.  - parameter
         # start_r    - Range start number       - parameter
         # end_r      - Range end number         - parameter
-        step_r = 50  # Range step number        - default
+        step_r = self.stepSize  # Range step number        - default
 
         #
         # Box - widget container box.
@@ -130,7 +147,7 @@ class SpinBoxClass:
     
         #
         # default initial 'Range and Step' spinbox value.
-        sb_initial = '*1 Range Step'  # spinbox 'range' initial value
+        sb_initial  = '*1 Range Step'  # spinbox 'range' initial value
         sb_noneflag = 'None'  # spinbox 'step' initial value
 
         print('1: ', start_r, end_r)
@@ -249,8 +266,16 @@ class SpinBoxClass:
 if __name__ == '__main__':
 
     app = App(layout="grid")    # note 'app' is global    
-    sbc = SpinBoxClass(app)
+    
+    instructions = Text(app, text="Get numeric value", grid=[0, 0]) 
+    
+    sbYear = SpinBoxClass(app, 0, 1, 'Year',   1800, 2049, 50)   # args:  (app, x, y, name, minVal, maxVal, stepSize)
+    sbVol  = SpinBoxClass(app, 0, 2, 'Volume', 0,    400,  50)   # args:  (app, x, y, name, minVal, maxVal, stepSize)
+    sbDay  = SpinBoxClass(app, 0, 3, 'Day',    1,    31,   31)   # args:  (app, x, y, name, minVal, maxVal, stepSize)
     app.display()
+    
+        # self.getinput_sb1(0, 2, 'Volume', 0, 400)
+        # self.getinput_sb1(0, 3, 'Day', 1, 31)    
 
     # print(str(sbc))
 

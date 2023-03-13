@@ -98,8 +98,8 @@ class SpinBoxRanged:
         
         
         # NOW BUILD THE GUI STUFF        
-        self.guiSpinBoxText    = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxText(),    values=self.textList,    width=13, justify='left', wrap=1, state='readonly')       
-        self.guiSpinBoxNumeric = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxNumeric(), values=self.numericList, width=13, justify='left', wrap=1, state='readonly')
+        self.guiSpinBoxText    = Spinbox(self.guiContainer.tk, command=self.getValueSpinBoxText,    values=self.textList,    width=13, justify='left', wrap=1, state='readonly')       
+        self.guiSpinBoxNumeric = Spinbox(self.guiContainer.tk, command=self.getValueSpinBoxNumeric, values=self.numericList, width=13, justify='left', wrap=1, state='readonly')
         # self.guiSpinBoxNumeric = Spinbox(self.guiContainer.tk, command=lambda: self.getValueSpinBoxNumeric(), from_=0, to=20, width=13, justify='left', wrap=1, state='readonly')
         
         # Place all GUI objs (spacers, text, & Spinboxes) in .guiContainer, on a grid, left to right
